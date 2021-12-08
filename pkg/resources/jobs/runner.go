@@ -65,6 +65,11 @@ func NewRunnerJob(k6 *v1alpha1.K6, index int, testRunId, token string) (*batchv1
 		command = append(command, "--paused")
 	}
 
+	// this is a cloud output run
+	if len(testRunId) > 0 {
+		command = append(command, "--tag", fmt.Sprintf("instance_id=%d", index))
+	}
+
 	var zero int64 = 0
 
 	image := "ghcr.io/grafana/operator:latest-runner"
@@ -101,6 +106,8 @@ func NewRunnerJob(k6 *v1alpha1.K6, index int, testRunId, token string) (*batchv1
 	ports = append(ports, k6.Spec.Ports...)
 
 	env := newIstioEnvVar(k6.Spec.Scuttle, istioEnabled)
+
+	// this is a cloud output run
 	if len(testRunId) > 0 {
 		env = append(env, corev1.EnvVar{
 			Name:  "K6_CLOUD_PUSH_REF_ID",
@@ -110,6 +117,7 @@ func NewRunnerJob(k6 *v1alpha1.K6, index int, testRunId, token string) (*batchv1
 			Value: token,
 		})
 	}
+
 	env = append(env, k6.Spec.Runner.Env...)
 
 	job := &batchv1.Job{
