@@ -4,7 +4,7 @@
       {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- else}}
-   {{ print "{}" }}
+    {{ print "{}" }}
   {{- end }}
 {{- end -}}
 
