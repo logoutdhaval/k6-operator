@@ -20,7 +20,7 @@
   {{- if eq .Release.Namespace "default" }}
     {{- printf "%v-system" .Release.Name | indent 1 }}
   {{- else }}
-    {{- .Release.Namespace }} | indent 1
+    {{- .Release.Namespace | indent 1 }}
   {{- end }}
 {{- end -}}
 
