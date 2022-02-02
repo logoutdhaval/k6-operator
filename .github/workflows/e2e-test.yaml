@@ -36,28 +36,19 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.7.2
-          
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-
-      - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.2.0
-
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
-
-      - name: Run chart-testing (lint)
-        run: ct lint
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.2.0
         if: steps.list-changed.outputs.changed == 'true'
 
-      - name: Run chart-testing (install)
-        run: ct install --target-branch ${{ github.ref_name }}
+      - name: Testing
+        run: |
+          helm install k6-operator ./charts/ -f ./charts/values.yaml
+          kubectl create configmap crocodile-stress-test --from-file e2e/test.js
+          kubectl apply -f e2e/test.yaml
+          sleep 30
+          kubectl get namespaces
+          kubectl get jobs -A
+          kubectl wait --for=condition=complete --timeout=180s job/k6-sample-1
+          kubectl delete configmap crocodile-stress-test
+          kubectl delete -f e2e/test.yaml
