@@ -33,13 +33,13 @@ func StartJobs(ctx context.Context, log logr.Logger, k6 *v1alpha1.K6, r *K6Recon
 
 	err := wait.PollImmediate(time.Second*5, time.Second*60, func() (done bool, err error) {
 		selector := labels.SelectorFromSet(map[string]string{
-			"app":   "k6",
-			"k6_cr": k6.Name,
+			"app":    "k6",
+			"k6_cr":  k6.Name,
+			"runner": "true",
 		})
 
 		opts := &client.ListOptions{LabelSelector: selector, Namespace: k6.Namespace}
 		pl := &v1.PodList{}
-
 		if e := r.List(ctx, pl, opts); e != nil {
 			log.Error(e, "Could not list pods")
 			return false, e
@@ -80,7 +80,7 @@ func StartJobs(ctx context.Context, log logr.Logger, k6 *v1alpha1.K6, r *K6Recon
 		starter := jobs.NewStarterJob(k6, hostnames)
 
 		if err = ctrl.SetControllerReference(k6, starter, r.Scheme); err != nil {
-			log.Error(err, "Failed to set controller reference for job")
+			log.Error(err, "Failed to set controller reference for the start job")
 		}
 
 		if err = r.Create(ctx, starter); err != nil {
@@ -96,6 +96,7 @@ func StartJobs(ctx context.Context, log logr.Logger, k6 *v1alpha1.K6, r *K6Recon
 		return ctrl.Result{}, err
 	}
 
+	log.Info("Changing stage of K6 status to started")
 	k6.Status.Stage = "started"
 	if err = r.Client.Status().Update(ctx, k6); err != nil {
 		log.Error(err, "Could not update status of custom resource")

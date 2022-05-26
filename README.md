@@ -76,6 +76,10 @@ spec:
         cool-label: foo
       annotations:
         cool-annotation: bar
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
     resources:
       limits:
         cpu: 200m
@@ -90,6 +94,10 @@ spec:
         cool-label: foo
       annotations:
         cool-annotation: bar
+    securityContext:
+      runAsUser: 2000
+      runAsGroup: 2000
+      runAsNonRoot: true
 ```
 
 The test configuration is applied using
@@ -146,6 +154,52 @@ Defines options for the starter pod. This includes:
 * passing in custom image
 * passing in labels and annotations
 
+### k6 outputs
+
+#### k6 Cloud output
+
+k6 supports [output to its Cloud](https://k6.io/docs/results-visualization/cloud) with `k6 run --out cloud script.js` command. This feature is available in k6-operator as well for subscribed users. Note that it supports only `parallelism: 20` or less.
+
+To use this option in k6-operator, set the argument in yaml:
+
+```yaml
+...
+  script:
+    configMap:
+      name: "<configmap>"
+  arguments: --out cloud
+...
+```
+
+Then uncomment cloud output section in `config/default/kustomization.yaml` and copy your token from the Cloud there:
+
+```yaml
+# Uncomment this section if you need cloud output and copy-paste your token
+secretGenerator:
+- name: cloud-token
+  literals:
+  - token=<copy-paste-token-string-here>
+  options:
+    annotations:
+      kubernetes.io/service-account.name: k6-operator-controller
+    labels:
+      k6cloud: token
+```
+
+This is sufficient to run k6 with the Cloud output and default values of `projectID` and `name` (`"k6-operator-test"`). For non-default values, extended script options can be used like this:
+
+```js
+export let options = {
+  ...
+  ext: {
+    loadimpact: {
+      name: 'Configured k6-operator test',
+      projectID: 1234567,
+    }
+  }
+};
+```
+
 ### Cleaning up between test runs
 After completing a test run, you need to clean up the test jobs created. This is done by running the following command:
 ```bash
@@ -197,7 +251,7 @@ image using github.com/szkiba/xk6-prometheus as an extension:
 
 ```Dockerfile
 # Build the k6 binary with the extension
-FROM golang:1.16.4-buster as builder
+FROM golang:1.18.1 as builder
 
 RUN go install go.k6.io/xk6/cmd/xk6@latest
 RUN xk6 build --output /k6 --with github.com/szkiba/xk6-prometheus@latest

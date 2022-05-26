@@ -14,9 +14,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
-// CreateJobs that will spawn k6 pods, running distributed tests
+// CreateJobs creates jobs that will spawn k6 pods for distributed test
 func CreateJobs(ctx context.Context, log logr.Logger, k6 *v1alpha1.K6, r *K6Reconciler) (ctrl.Result, error) {
-
 	var err error
 	var res ctrl.Result
 
@@ -26,6 +25,7 @@ func CreateJobs(ctx context.Context, log logr.Logger, k6 *v1alpha1.K6, r *K6Reco
 		return res, err
 	}
 
+	log.Info("Changing stage of K6 status to created")
 	k6.Status.Stage = "created"
 	if err = r.Client.Status().Update(ctx, k6); err != nil {
 		log.Error(err, "Could not update status of custom resource")
@@ -63,10 +63,13 @@ func launchTest(ctx context.Context, k6 *v1alpha1.K6, index int, log logr.Logger
 	msg := fmt.Sprintf("Launching k6 test #%d", index)
 	log.Info(msg)
 
-	if job, err = jobs.NewRunnerJob(k6, index); err != nil {
+	if job, err = jobs.NewRunnerJob(k6, index, testRunId, token); err != nil {
 		log.Error(err, "Failed to generate k6 test job")
 		return err
 	}
+
+	log.Info(fmt.Sprintf("Runner job is ready to start with image `%s` and command `%s`",
+		job.Spec.Template.Spec.Containers[0].Image, job.Spec.Template.Spec.Containers[0].Command))
 
 	if err = ctrl.SetControllerReference(k6, job, r.Scheme); err != nil {
 		log.Error(err, "Failed to set controller reference for job")
