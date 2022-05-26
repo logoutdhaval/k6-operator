@@ -79,8 +79,8 @@ uninstall: manifests kustomize
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests kustomize
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
-	$(KUSTOMIZE) build config/default | kubectl apply -f -
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG_NAME}:${IMG_TAG}
+  $(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # Delete operator from a cluster
 delete: manifests kustomize
@@ -108,7 +108,7 @@ docker-build: test
 
 # Push the docker image
 docker-push:
-	docker push ${IMG}
+	docker push ${IMG_NAME}:${IMG_TAG}
 
 # find or download controller-gen
 # download controller-gen if necessary
