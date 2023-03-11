@@ -10,5 +10,5 @@ metadata:
       {{- toYaml . | nindent 4 }}
     {{- end }}
   annotations:
-    {{- include "k6-operator.customAnnotations" . | default "{}" | nindent 4 }}
+    {{- include "k6-operator.customAnnotations" . | default "" | nindent 4 }}
 {{- end }}

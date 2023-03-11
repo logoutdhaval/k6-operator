@@ -5,9 +5,9 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
     {{- include "k6-operator.labels" . | nindent 4 }}
-    {{- include "k6-operator.customLabels" . | default "{}" | nindent 4 }}
+    {{- include "k6-operator.customLabels" . | default "" | nindent 4 }}
   annotations:
-    {{- include "k6-operator.customAnnotations" . | default "{}" | nindent 4 }}
+    {{- include "k6-operator.customAnnotations" . | default "" | nindent 4 }}
 rules:
 - apiGroups:
   - apps
@@ -106,9 +106,9 @@ metadata:
   name: {{ include "k6-operator.fullname" . }}-proxy-role
   labels:
     {{- include "k6-operator.labels" . | nindent 4 }}
-    {{- include "k6-operator.customLabels" . | default "{}" | nindent 4 }}
+    {{- include "k6-operator.customLabels" . | default "" | nindent 4 }}
   annotations:
-    {{- include "k6-operator.customAnnotations" . | default "{}" | nindent 4 }}
+    {{- include "k6-operator.customAnnotations" . | default "" | nindent 4 }}
 rules:
 - apiGroups:
   - authentication.k8s.io
