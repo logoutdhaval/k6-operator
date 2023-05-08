@@ -289,7 +289,7 @@ func TestNewRunnerJob(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565", "--paused"},
+						Command:      []string{"k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),
@@ -381,7 +381,7 @@ func TestNewRunnerJobNoisy(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"k6", "run", "/test/test.js", "--address=0.0.0.0:6565", "--paused"},
+						Command:      []string{"k6", "run", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),
@@ -474,7 +474,7 @@ func TestNewRunnerJobUnpaused(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565"},
+						Command:      []string{"k6", "run", "--quiet", "/test/test.js","--insecure-skip-tls-verify", "--address=0.0.0.0:6565"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),
@@ -567,7 +567,7 @@ func TestNewRunnerJobArguments(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"k6", "run", "--quiet", "--cool-thing", "/test/test.js", "--address=0.0.0.0:6565", "--paused"},
+						Command:      []string{"k6", "run", "--quiet", "--cool-thing", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),
@@ -661,7 +661,7 @@ func TestNewRunnerJobServiceAccount(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565", "--paused"},
+						Command:      []string{"k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),
@@ -756,7 +756,7 @@ func TestNewRunnerJobIstio(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:   "ghcr.io/grafana/operator:latest-runner",
 						Name:    "k6",
-						Command: []string{"scuttle", "k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565", "--paused"},
+						Command: []string{"scuttle", "k6", "run", "--quiet", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused"},
 						Env: []corev1.EnvVar{
 							{
 								Name:  "ENVOY_ADMIN_API",
@@ -863,7 +863,7 @@ func TestNewRunnerJobCloud(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:   "ghcr.io/grafana/operator:latest-runner",
 						Name:    "k6",
-						Command: []string{"k6", "run", "--quiet", "--out", "cloud", "/test/test.js", "--address=0.0.0.0:6565", "--paused", "--tag", "instance_id=1"},
+						Command: []string{"k6", "run", "--quiet", "--out", "cloud", "/test/test.js", "--address=0.0.0.0:6565","--insecure-skip-tls-verify", "--paused", "--tag", "instance_id=1"},
 						Env: []corev1.EnvVar{
 							{
 								Name:  "K6_CLOUD_PUSH_REF_ID",
@@ -961,7 +961,7 @@ func TestNewRunnerJobLocalFile(t *testing.T) {
 					Containers: []corev1.Container{{
 						Image:        "ghcr.io/grafana/operator:latest-runner",
 						Name:         "k6",
-						Command:      []string{"sh", "-c", "if [ ! -f /test/test.js ]; then echo \"LocalFile not found exiting...\"; exit 1; fi;\nk6 run --quiet /test/test.js --address=0.0.0.0:6565 --paused"},
+						Command:      []string{"sh", "-c", "if [ ! -f /test/test.js ]; then echo \"LocalFile not found exiting...\"; exit 1; fi;\nk6 run --quiet /test/test.js --address=0.0.0.0:6565  --insecure-skip-tls-verify --paused"},
 						Env:          []corev1.EnvVar{},
 						Resources:    corev1.ResourceRequirements{},
 						VolumeMounts: script.VolumeMount(),

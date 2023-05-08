@@ -41,10 +41,10 @@ jobs:
       - name: Testing
         run: |
           kubectl cluster-info
-          kubectl apply -f rendered.yaml
+          kubectl apply -f rendered.yaml --insecure-skip-tls-verify
           kubectl -n k6-operator-system set image deployment/k6-operator-controller-manager manager=ghcr.io/grafana/operator:${{ github.sha }}
           kubectl create configmap crocodile-stress-test --from-file e2e/test.js
-          kubectl apply -f e2e/test.yaml
+          kubectl apply -f e2e/test.yaml --insecure-skip-tls-verify
           sleep 30
           kubectl get namespaces
           kubectl get jobs -A

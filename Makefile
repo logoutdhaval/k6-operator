@@ -53,7 +53,7 @@ test-setup-ci:
 
 e2e: deploy
 	kubectl create configmap crocodile-stress-test --from-file e2e/test.js
-	kubectl apply -f e2e/test.yaml
+	kubectl apply -f e2e/test.yaml --insecure-skip-tls-verify
 
 e2e-cleanup:
 	kubectl delete configmap crocodile-stress-test

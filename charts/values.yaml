@@ -1,12 +1,12 @@
 # customAnnotations -- Custom Annotations to be applied on all resources
 customAnnotations: {}
-
+enabled: true
 # customLabels -- Custom Label to be applied on all resources
 customLabels: {}
 
 namespace:
   # namespace.create -- create the namespace (default: true)
-  create: true
+  create: false
 
 prometheus:
   # prometheus.enabled -- enables the prometheus metrics scraping (default: false)
